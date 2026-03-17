@@ -1,11 +1,10 @@
-#include <iostream>
-#include <SFML/Graphics.hpp> 
-
-#include "imgui.h"
-#include "imgui-SFML.h"
+#include "GameEngine.h"
 
 int main()
 {
-	std::cout << "This is the great american game" << std::endl;
+	GameEngine game("./config/assets.txt");
+
+	game.run();
+
 	return 0;
 }
