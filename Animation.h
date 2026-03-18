@@ -29,4 +29,5 @@ public:
 	const std::string& getName() const;								// get the name of the animation
 	const Vec2& getSize() const;									// get the sie of one frame
 	sf::Sprite& getSprite();										// get the actual sprite by reference
+	void setOrigin(float x, float y);												// set the origin of the sprite
 };

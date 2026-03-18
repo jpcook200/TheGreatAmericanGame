@@ -100,6 +100,14 @@ const AssetManager& GameEngine::getAssetManager() const
 	return m_assetManager;
 }
 
+Vec2 GameEngine::getMousePos()
+{
+	// get the current mouse position in the game world and return it as a Vec2
+	sf::Vector2f mousePos = getWindow().mapPixelToCoords(sf::Mouse::getPosition(getWindow()));
+	
+	return Vec2(mousePos.x, mousePos.y);
+}
+
 std::shared_ptr<Scene> GameEngine::getCurrentScene()
 {
 	return m_sceneMap.at(m_currentScene);

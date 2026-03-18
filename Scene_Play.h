@@ -11,6 +11,9 @@
 #include "Components.h"
 #include "GameEngine.h"
 
+#include "MovementSystem.h"
+#include "AimSystem.h"
+
 class Scene_Play : public Scene
 {
     struct PlayerConfig
@@ -37,7 +40,6 @@ protected:
     void loadLevel(const std::string& filename);
     void spawnPlayer();
     void spawnBullet(std::shared_ptr<Entity> entity);
-    void sMovement();
     void sLifespan();
     void sCollision();
     void sAnimation();
@@ -47,6 +49,27 @@ protected:
     void setPaused(bool);
 
     void changePlayerStateTo(PlayerState s);
+
+    //systems
+    MovementSystem sMovement;
+    AimSystem sAim;
+	
+    // player variables to be added to config file eventually------------
+    //idle bob variables
+    float bobAmplitude = 0.2f;
+    float bobSpeed = 0.1f;
+	float bobTime = 0;
+	//tilt variables
+	float playerTilt = 5.f;
+    float flipSpeed = 0.2f;
+	float flipTrigger = 0;
+	float angleClamp = 0.f;
+	float aimClamp = 80.f;
+    // Parameters for movement
+   
+    
+    float toolMountOffsetX = 18.f;
+	float toolMountOffsetY = 14.4f;
 
 public:
     Scene_Play(GameEngine* gameEngine, const std::string& levelPath);

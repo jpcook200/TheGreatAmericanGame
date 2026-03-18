@@ -39,7 +39,8 @@ public:
 	void run();																// main game loop runs and creates frames
 
 	sf::RenderWindow& getWindow();											// get the actual game window instance
-	const AssetManager& getAssetManager() const;										// get the actual instantiated assets object
+	const AssetManager& getAssetManager() const;							// get the actual instantiated assets object
+	Vec2 getMousePos();														// get the mouse position in the game world
 	bool isRunning();														// return true or false if game is running or not
 
 };

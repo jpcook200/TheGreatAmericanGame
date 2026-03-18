@@ -12,7 +12,10 @@ Entity::Entity(const size_t id, const std::string& tag)
         CBoundingBox(),
         CAnimation(),
         CGravity(),
-        CState()
+        CState(),
+		CTransformSmooth(),
+		CAim(),
+		CIdleBob()
     );
 }
 

@@ -38,7 +38,7 @@ void Scene_Menu_Main::sDoAction(const Action& action)
 	{
 		if (action.getName() == "PLAY")
 		{
-			m_game->changeScene("PLAY", std::make_shared<Scene_Play>(m_game, "./config/level1.txt"));
+			m_game->changeScene("PLAY", std::make_shared<Scene_Play>(m_game, ""));
 			
 		}
 	}

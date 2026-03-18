@@ -1,26 +1,21 @@
 #pragma once
 
 #include "Animation.h"
+class Entity;
 
-enum struct PlayerState {
-    IDLE_UP,
-    IDLE_DOWN,
-    IDLE_LEFT,
-    IDLE_RIGHT,
-
-    RUN_UP,
-    RUN_DOWN,
-    RUN_LEFT,
-    RUN_RIGHT
+enum struct PlayerState 
+{
+    IDLE,
+    MOVE
 };
 
 enum struct PlayerFacing
 {
-    UP,
-    DOWN,
     RIGHT,
     LEFT
 };
+
+
 
 class Component
 {
@@ -31,6 +26,8 @@ public:
 class CTransform : public Component
 {
 public:
+	std::shared_ptr<Entity> parent = nullptr;
+	Vec2 offSet = { 0.0, 0.0 };
     Vec2 pos = { 0.0, 0.0 };
     Vec2 prevPos = { 0.0, 0.0 };
     Vec2 scale = { 1.0, 1.0 };
@@ -43,6 +40,42 @@ public:
         : pos(p), prevPos(p), scale(sc), velocity(sp), angle(a) {
     };
 
+};
+
+class CTransformSmooth : public Component
+{
+public:
+    float acceleration;
+    float maxSpeed;
+    float damping;
+
+	CTransformSmooth() {};
+    CTransformSmooth(float a, float ms, float d)
+        : acceleration(a), maxSpeed(ms), damping(d) {
+	}
+
+};
+
+class CAim : public Component
+{
+public:
+    float angle = 0;
+    bool shouldFlip = false;
+    bool followMouse = false;
+
+	CAim() {};
+    CAim(float a, bool shouldFlip, bool followMouse) : angle(a), shouldFlip(shouldFlip), followMouse(followMouse) {};
+};
+
+class CIdleBob : public Component
+{
+public:
+    float speed;
+    float amplitude;
+    float time;
+
+    CIdleBob() {};
+    CIdleBob(float speed, float amplitude, float time) : speed(speed), amplitude(amplitude), time(time) {};
 };
 
 class CInput : public Component
@@ -76,7 +109,7 @@ class CState : public Component
 public:
     PlayerState state;
     PlayerState preState;
-    PlayerFacing facing = PlayerFacing::DOWN;
+    PlayerFacing facing = PlayerFacing::LEFT;
     bool changeAnimate = false;
 
     CState() {};

@@ -74,3 +74,8 @@ sf::Sprite& Animation::getSprite()
 {
 	return m_sprite;
 }
+
+void Animation::setOrigin(float x, float y)
+{
+	m_sprite.setOrigin({x, y});
+}

@@ -27,6 +27,6 @@ protected:
 	void sDoAction(const Action& action);				// get action type and perform action
 
 public:
-	Scene_Menu_Main(GameEngine* gameEngine = nullptr);		// constructor
+	Scene_Menu_Main(GameEngine* gameEngine = nullptr);	// constructor
 	void sRender();										// render method to render the buttons
 };
