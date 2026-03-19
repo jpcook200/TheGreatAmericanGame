@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="TheGreatAmericanGame.vcxproj" />
+  <Project Path="TheGreatAmericanGame.vcxproj" Id="d7609ea1-71c9-407a-82a0-a322e4bb8d4f" />
 </Solution>

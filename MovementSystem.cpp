@@ -1,4 +1,5 @@
 #include "MovementSystem.h"
+#include "iostream"
 
 MovementSystem::MovementSystem()
 {
@@ -10,18 +11,19 @@ void MovementSystem::update(EntityManager& m) {
 
         auto& transform = e->getComponent<CTransform>();
 
-        // 1. Process Input and Physics Logic
+        // Process Input and Physics Logic
         if (e->hasComponent<CInput>() && e->hasComponent<CTransformSmooth>()) {
             handleInput(e);
         }
 
-        // 2. Process Aesthetic/Idle Logic
+        // Process Aesthetic/Idle Logic
         if (e->hasComponent<CIdleBob>()) {
             handleIdleBob(e);
         }
 
-        // 3. Finalize Position (Movement or Hierarchy)
+        // Finalize Position (Movement or Hierarchy)
         updateTransform(e);
+		
     }
 }
 
@@ -31,6 +33,7 @@ void MovementSystem::handleInput(std::shared_ptr<Entity> e) {
     auto& input = e->getComponent<CInput>();
     auto& transform = e->getComponent<CTransform>();
     auto& smooth = e->getComponent<CTransformSmooth>();
+    auto& state = e->getComponent<CState>();
 
     Vec2 inputDir(0, 0);
     if (input.up)    inputDir.y -= 1;
@@ -39,6 +42,7 @@ void MovementSystem::handleInput(std::shared_ptr<Entity> e) {
     if (input.right) inputDir.x += 1;
 
     if (inputDir.length() > 0) {
+        state.set(PlayerState::MOVE);
         inputDir = inputDir.normalized();
         transform.velocity += inputDir * smooth.acceleration;
 
@@ -48,8 +52,10 @@ void MovementSystem::handleInput(std::shared_ptr<Entity> e) {
         }
     }
     else {
+        state.set(PlayerState::IDLE);
         applyDamping(transform, smooth);
     }
+	std::cout << inputDir.x << " , " << inputDir.y << std::endl;
 }
 
 void MovementSystem::applyDamping(CTransform& t, CTransformSmooth& s) {
@@ -62,11 +68,8 @@ void MovementSystem::handleIdleBob(std::shared_ptr<Entity> e) {
     auto& t = e->getComponent<CTransform>();
     auto& bob = e->getComponent<CIdleBob>();
 
-    // Only bob if stationary (optional)
-    if (t.velocity.length() < 0.1f) {
-        bob.time += bob.speed;
-        t.pos.y += std::sin(bob.time) * bob.amplitude;
-    }
+    bob.time += bob.speed;
+    t.pos.y += std::sin(bob.time) * bob.amplitude;
 }
 
 void MovementSystem::updateTransform(std::shared_ptr<Entity> e) {

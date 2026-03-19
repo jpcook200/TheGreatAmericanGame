@@ -112,6 +112,15 @@ public:
     PlayerFacing facing = PlayerFacing::LEFT;
     bool changeAnimate = false;
 
+    void set(PlayerState newState)
+    {
+        if (state != newState)
+        {
+            state = newState;
+            changeAnimate = true;
+        }
+    }
+
     CState() {};
     CState(const PlayerState s) : state(s), preState(s) {};
 };
