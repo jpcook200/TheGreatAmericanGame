@@ -6,6 +6,8 @@ RenderSystem::RenderSystem()
 
 void RenderSystem::update(EntityManager& entityManager, sf::RenderWindow& window)
 {
+	drawCheckerBoard(window);
+
     for (auto& e : entityManager.getEntities())
     {
         if (e->getTag() == "player" && e->hasComponent<CTransform>())
@@ -19,6 +21,8 @@ void RenderSystem::update(EntityManager& entityManager, sf::RenderWindow& window
             drawEntity(e, window);
         }
     }
+
+
 }
 
 // --- Private Helper Methods ---
@@ -31,10 +35,6 @@ void RenderSystem::updateCamera(std::shared_ptr<Entity> player, sf::RenderWindow
     sf::View view = window.getView();
     sf::Vector2f viewCenter = view.getCenter();
     sf::Vector2f viewSize = view.getSize();
-    
-    float zoomLevel = 0.8f; // Set this to 2.0f to see twice as much area
-    sf::Vector2f baseSize = sf::Vector2f(window.getSize()); // The original window resolution
-    view.setSize({baseSize.x * zoomLevel, baseSize.y * zoomLevel});
 
     // Dead zone calculations (1/5th of view size)
     float dzW = viewSize.x / 5.f;
@@ -70,4 +70,43 @@ void RenderSystem::drawEntity(std::shared_ptr<Entity> e, sf::RenderWindow& windo
     anim.getSprite().setRotation(sf::degrees(t.angle));
 
     window.draw(anim.getSprite());
+}
+
+void RenderSystem::drawCheckerBoard(sf::RenderWindow& window)
+{
+    sf::View view = window.getView();
+    sf::Vector2f center = view.getCenter();
+    sf::Vector2f size = view.getSize();
+
+    float tileSize = 50.f;
+
+    // Calculate bounds of visible area
+    float left = center.x - size.x / 2.f;
+    float right = center.x + size.x / 2.f;
+    float top = center.y - size.y / 2.f;
+    float bottom = center.y + size.y / 2.f;
+
+    // Snap to grid so it doesn't "slide"
+    int startX = static_cast<int>(left / tileSize) - 1;
+    int endX = static_cast<int>(right / tileSize) + 1;
+    int startY = static_cast<int>(top / tileSize) - 1;
+    int endY = static_cast<int>(bottom / tileSize) + 1;
+
+    sf::RectangleShape tile(sf::Vector2f(tileSize, tileSize));
+
+    for (int y = startY; y <= endY; y++)
+    {
+        for (int x = startX; x <= endX; x++)
+        {
+            tile.setPosition({ x * tileSize, y * tileSize });
+
+            bool isLight = (x + y) % 2 == 0;
+
+            tile.setFillColor(isLight
+                ? sf::Color(100, 150, 255)   // light blue
+                : sf::Color(50, 100, 200));  // dark blue
+
+            window.draw(tile);
+        }
+    }
 }

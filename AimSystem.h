@@ -3,12 +3,6 @@
 
 class AimSystem
 {
-	/*
-		@brief Helper method to update the entity's flip based on the direction to the mouse.
-		@param transform - reference to the entity's CTransform component
-		@param dir - the direction vector from the entity to the mouse position
-	*/
-	void updateEntityFlip(CTransform& transform, const Vec2& dir);
 
 	/*
 		@brief Helper method to update the entity's rotation to face the mouse position.
@@ -26,8 +20,9 @@ public:
 		It will also flip the entity's sprite if the mouse is to the left of the entity.
 		@param entityManager - reference to the EntityManager instance to access the entities
 		@param mousePos - the current position of the mouse in world coordinates
+		@param dt - the delta time since the last update
 	*/
-	void update(EntityManager& entityManager, Vec2 mousePos);
+	void update(EntityManager& entityManager, Vec2 mousePos, float dt);
 
 };
 

@@ -20,20 +20,20 @@ void Scene_Play::init(const std::string& levelPath)
 	loadLevel(levelPath);
 }
 
-void Scene_Play::update()
+void Scene_Play::update(float dt)
 {
 	m_entityManager.update();
 
 	if (!m_pause)
 	{
-		MovementSystem.update(m_entityManager);
-		AimSystem.update(m_entityManager, m_game->getMousePos());
-		sLifespan();
+		MovementSystem.update(m_entityManager, dt, m_game->getMousePos());
+		AimSystem.update(m_entityManager, m_game->getMousePos(), dt);
+		sLifespan(); // give dt
 		sCollision();
 		m_currentFrame++;
 	}
 
-	AnimationSystem.update(m_entityManager, m_game->getAssetManager());
+	AnimationSystem.update(m_entityManager, m_game->getAssetManager(), dt);
 	sRender();
 }
 
@@ -66,19 +66,21 @@ void Scene_Play::spawnPlayer()
 	m_player->addComponent<CInput>();
 	m_player->addComponent<CAim>(
 		0,
-		true,
 		false
 	);
 	m_player->addComponent<CState>();
 	m_player->addComponent<CTransformSmooth>(
-		0.9f,	// acc
-		5.f,	// max speed
-		0.9f	// damping
+		500.f,	// acc
+		250.f,	// max speed
+		0.2f,	// damping
+		6.f,	// flip speed
+		1.f,	// tilt speed
+		10.f	// tilt max angle
 	);
 
 	m_player->addComponent<CIdleBob>(
-		0.1f, //speed
-		0.2f, //amplitude
+		7.f, //speed
+		1.f, //amplitude
 		0     //time
 	);
 
@@ -103,7 +105,6 @@ void Scene_Play::spawnPlayer()
 	gun->getComponent<CTransform>().parent = toolMount;
 	gun->addComponent<CAim>(
 		0,
-		false,
 		true
 	);
 

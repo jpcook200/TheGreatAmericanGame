@@ -45,13 +45,16 @@ public:
 class CTransformSmooth : public Component
 {
 public:
-    float acceleration;
-    float maxSpeed;
-    float damping;
+    float acceleration = 20.f;
+    float maxSpeed = 200.f;
+    float damping = 0.8f;
+	float flipSpeed = 0.1f;
+	float tiltSpeed = 30.f;
+	float tiltMaxAngle = 15.f;
 
 	CTransformSmooth() {};
-    CTransformSmooth(float a, float ms, float d)
-        : acceleration(a), maxSpeed(ms), damping(d) {
+    CTransformSmooth(float a, float ms, float d, float fs, float ts, float tma)
+        : acceleration(a), maxSpeed(ms), damping(d), flipSpeed(fs), tiltSpeed(ts), tiltMaxAngle(tma) {
 	}
 
 };
@@ -60,11 +63,10 @@ class CAim : public Component
 {
 public:
     float angle = 0;
-    bool shouldFlip = false;
     bool followMouse = false;
 
 	CAim() {};
-    CAim(float a, bool shouldFlip, bool followMouse) : angle(a), shouldFlip(shouldFlip), followMouse(followMouse) {};
+    CAim(float a, bool followMouse) : angle(a), followMouse(followMouse) {};
 };
 
 class CIdleBob : public Component

@@ -5,7 +5,7 @@ AnimationSystem::AnimationSystem()
 {
 }
 
-void AnimationSystem::update(EntityManager& entityManager, const AssetManager& assetManager)
+void AnimationSystem::update(EntityManager& entityManager, const AssetManager& assetManager, float dt)
 {
 	// Update all entity animations
 	for (auto& e : entityManager.getEntities())
@@ -18,8 +18,7 @@ void AnimationSystem::update(EntityManager& entityManager, const AssetManager& a
 				auto& transform = e->getComponent<CTransform>();
 				auto& state = e->getComponent<CState>();
 				auto& input = e->getComponent<CInput>();
-				auto stateString = state.state == PlayerState::MOVE ? "MOVE" : "IDLE";
-				std::cout << stateString << std::endl;
+
 				// handle changing animations 
 				if (state.changeAnimate)
 				{
@@ -47,7 +46,7 @@ void AnimationSystem::update(EntityManager& entityManager, const AssetManager& a
 					state.changeAnimate = false;
 				}
 			}
-			e->getComponent<CAnimation>().animation.update();
+			e->getComponent<CAnimation>().animation.update(dt);
 		}
 	}
 }

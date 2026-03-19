@@ -8,7 +8,7 @@ AimSystem::AimSystem()
 {
 }
 
-void AimSystem::update(EntityManager& m, Vec2 mousePos)
+void AimSystem::update(EntityManager& m, Vec2 mousePos, float dt)
 {
     for (auto& e : m.getEntities())
     {
@@ -23,12 +23,6 @@ void AimSystem::update(EntityManager& m, Vec2 mousePos)
 		//get target angle in degrees using atan2
         float targetAngle = utils::angleBetween(transform.pos, mousePos);
 
-        //Handle Body Orientation
-        if (aim.shouldFlip)
-        {
-            updateEntityFlip(transform, dir);
-        }
-
         // Handle Aim Direction
         if (aim.followMouse)
         {
@@ -38,13 +32,6 @@ void AimSystem::update(EntityManager& m, Vec2 mousePos)
 }
 
 // --- Private Helpers ---
-
-void AimSystem::updateEntityFlip(CTransform& transform, const Vec2& dir)
-{
-    // Smoothly interpolate scale.x to create a turning effect
-    float targetScale = (dir.x < 0) ? -1.f : 1.f;
-    transform.scale.x += (targetScale - transform.scale.x) * 0.1f;
-}
 
 void AimSystem::updateAimRotation(std::shared_ptr<Entity> e, CTransform& transform, float angle)
 {

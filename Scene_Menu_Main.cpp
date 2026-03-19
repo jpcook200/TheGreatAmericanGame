@@ -21,7 +21,7 @@ void Scene_Menu_Main::init()
 
 }
 
-void Scene_Menu_Main::update()
+void Scene_Menu_Main::update(float dt)
 {
 	sRender();
 }

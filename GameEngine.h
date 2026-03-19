@@ -22,7 +22,7 @@ protected:
 	bool m_running = true;													// main boolean to allow game to run or quit
 
 	void init(const std::string& path);										// main init method called in the constructor - takes a path of a config file to init variables
-	void update();															// runs every frame to update physics or anything else in the loop
+	void update(float dt);															// runs every frame to update physics or anything else in the loop
 	void sUserInput();														// system that takes user inputs and creates actions in the currentScene
 	std::shared_ptr<Scene> getCurrentScene();								// method to get the currentScene returns a pointer to the scene
 

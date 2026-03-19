@@ -32,7 +32,7 @@ public:
 	Scene(GameEngine* gameEngine);								// constructor
 	virtual ~Scene();											// destructor
 
-	virtual void update() = 0;									// virtual void update function to update any scene info, must be included in child classes
+	virtual void update(float dt) = 0;									// virtual void update function to update any scene info, must be included in child classes
 	virtual void sDoAction(const Action& action) = 0;			// action system which converts actions to output created in child class
 	virtual void sRender() = 0;									// render items in the scene, cerated in the child
 

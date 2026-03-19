@@ -5,7 +5,7 @@ Texture subIdle assets/sprites/sub-idle.png
 Texture toolMount assets/sprites/tool-mount.png
 Texture gun assets/sprites/gun.png
 
-Animation subMove subMove 5 2
+Animation subMove subMove 5 0.02
 Animation subIdle subIdle 1 1
 Animation toolMount toolMount 1 1
 Animation gun gun 1 1

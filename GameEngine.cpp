@@ -14,7 +14,7 @@ void GameEngine::init(const std::string& path)
 	m_assetManager.loadFromFile(path);
 
 	sf::ContextSettings settings;
-	settings.antiAliasingLevel = 8;
+	settings.antiAliasingLevel = 16;
 
 	// Create window
 	m_window.create(
@@ -31,11 +31,11 @@ void GameEngine::init(const std::string& path)
 	changeScene("MENU", std::make_shared<Scene_Menu_Main>(this));
 }
 
-void GameEngine::update()
+void GameEngine::update(float dt)
 {
 	// call the current scenes update method so each scene is in charge of how things update
 	// to do once scene is created
-	getCurrentScene()->update();
+	getCurrentScene()->update(dt);
 }
 
 void GameEngine::sUserInput()
@@ -74,12 +74,16 @@ void GameEngine::sUserInput()
 
 void GameEngine::run()
 {
+	sf::Clock deltaClock;
 	//main game loop
 	while (isRunning())
 	{
+		sf::Time dt = deltaClock.restart();
+		float deltaTime = dt.asSeconds();
+
 		m_window.clear();
 		sUserInput();
-		update();
+		update(deltaTime);
 		m_window.display();
 	}
 }

@@ -87,7 +87,7 @@ void AssetManager::loadFromFile(const std::string& path)
 			std::string anim_name;
 			std::string tex_name;
 			size_t frames;
-			size_t speed;
+			float speed;
 
 			file >> anim_name >> tex_name >> frames >> speed;
 			addAnimation(anim_name, Animation(anim_name, getTexture(tex_name), frames, speed));

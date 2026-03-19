@@ -60,5 +60,5 @@ protected:
 
 public:
     Scene_Play(GameEngine* gameEngine, const std::string& levelPath);
-    void update();
+    void update(float dt);
 };

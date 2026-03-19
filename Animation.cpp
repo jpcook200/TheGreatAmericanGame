@@ -1,4 +1,5 @@
 #include "Animation.h"
+#include <iostream>
 
 Animation::Animation() {}
 
@@ -11,12 +12,13 @@ Animation::Animation(
 	const std::string& name,
 	const sf::Texture& t,
 	size_t frameCount,
-	size_t speed)
+	float speed)
 	: m_sprite(t),
 	m_frameCount(frameCount),
 	m_currentFrame(0),
 	m_speed(speed),
-	m_name(name)
+	m_name(name),
+	m_timer(0.0f)
 {
 	// initlaise the size of the frame
 	m_size = Vec2(t.getSize().x / frameCount, t.getSize().y);
@@ -33,20 +35,29 @@ Animation::Animation(
 	);
 }
 
-void Animation::update()
+void Animation::update(float dt)
 {
-
+	// If speed is 0, the animation is static
 	if (m_speed == 0)
 	{
 		return;
 	}
 
-	// increment the current frame
-	m_currentFrame++;
+	// 1. Accumulate time using dt
+	// You will need to add 'float m_timer = 0.0f;' to your Animation.h class members
+	m_timer += dt;
 
-	//frame number is the left over after taking the mod of the framecount and incorporate speed to slow it down or speed up
-	size_t animFrame = (m_currentFrame / m_speed) % m_frameCount;
+	// 2. Check if enough time has passed to move to the next frame
+	if (m_timer >= m_speed)
+	{
+		m_currentFrame++;
+		m_timer = 0.0f; // Reset timer for the next frame
+	}
 
+	// 3. Calculate which frame to show (looping automatically)
+	size_t animFrame = m_currentFrame % m_frameCount;
+
+	// 4. Update the Sprite's texture rectangle
 	m_sprite.setTextureRect(
 		sf::IntRect(
 			{ (int)(animFrame * m_size.x), 0 },

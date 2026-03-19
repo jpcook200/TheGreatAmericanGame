@@ -22,7 +22,7 @@ protected:
 	size_t m_selectedMenuIndex = 0;						// selected index of menu
 
 	void init();										// initialise the menu scene
-	void update();										// run any updates in the game loop		
+	void update(float dt);										// run any updates in the game loop		
 	void onEnd();										// methods runs when the scene ends
 	void sDoAction(const Action& action);				// get action type and perform action
 
