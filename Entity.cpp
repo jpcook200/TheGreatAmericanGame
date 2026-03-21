@@ -15,7 +15,8 @@ Entity::Entity(const size_t id, const std::string& tag)
         CState(),
 		CTransformSmooth(),
 		CAim(),
-		CIdleBob()
+		CIdleBob(),
+        CParticles()
     );
 }
 

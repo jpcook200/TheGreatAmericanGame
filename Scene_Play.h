@@ -15,6 +15,7 @@
 #include "AimSystem.h"
 #include "AnimationSystem.h"
 #include "RenderSystem.h"
+#include "ParticleSystem.h"
 
 class Scene_Play : public Scene
 {
@@ -26,6 +27,7 @@ class Scene_Play : public Scene
 
 protected:
     std::shared_ptr<Entity> m_player;
+    std::shared_ptr<Entity> m_player_root;
     std::string m_levelPath;
     PlayerConfig m_playerConfig;
 
@@ -54,6 +56,7 @@ protected:
     AimSystem AimSystem;
 	AnimationSystem AnimationSystem;
     RenderSystem RenderSystem;
+    ParticleSystem particleSystem;
 	    
     float toolMountOffsetX = 18.f;
 	float toolMountOffsetY = 14.4f;

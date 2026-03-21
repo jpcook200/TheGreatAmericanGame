@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "EntityManager.h"
+#include "ParticleSystem.h"
 
 class RenderSystem
 {
@@ -12,7 +13,7 @@ class RenderSystem
 
 public:
 	RenderSystem();
-	void update(EntityManager& entityManager, sf::RenderWindow& window);
+	void update(EntityManager& entityManager, sf::RenderWindow& window, ParticleSystem& particleSystem);
 	
 };
 

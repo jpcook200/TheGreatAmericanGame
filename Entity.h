@@ -16,7 +16,8 @@ typedef std::tuple<
     CState,
     CTransformSmooth,
     CAim,
-    CIdleBob
+    CIdleBob,
+    CParticles
 > ComponentTuple;
 
 class Entity

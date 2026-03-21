@@ -4,10 +4,10 @@ RenderSystem::RenderSystem()
 {
 }
 
-void RenderSystem::update(EntityManager& entityManager, sf::RenderWindow& window)
+void RenderSystem::update(EntityManager& entityManager, sf::RenderWindow& window, ParticleSystem& particleSystem)
 {
 	drawCheckerBoard(window);
-
+    particleSystem.draw(window);
     for (auto& e : entityManager.getEntities())
     {
         if (e->getTag() == "player" && e->hasComponent<CTransform>())
@@ -21,8 +21,6 @@ void RenderSystem::update(EntityManager& entityManager, sf::RenderWindow& window
             drawEntity(e, window);
         }
     }
-
-
 }
 
 // --- Private Helper Methods ---

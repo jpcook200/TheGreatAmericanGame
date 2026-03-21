@@ -30,6 +30,7 @@ void Scene_Play::update(float dt)
 		AimSystem.update(m_entityManager, m_game->getMousePos(), dt);
 		sLifespan(); // give dt
 		sCollision();
+		//particleSystem.update(m_entityManager, dt);
 		m_currentFrame++;
 	}
 
@@ -49,33 +50,22 @@ void Scene_Play::loadLevel(const std::string& filename)
 
 void Scene_Play::sRender()
 {
-	RenderSystem.update(m_entityManager, m_game->getWindow());
+	RenderSystem.update(m_entityManager, m_game->getWindow(), particleSystem);
 }
 
 void Scene_Play::spawnPlayer()
 {
 	m_player = m_entityManager.addEntity("player");
-
 	m_player->addComponent<CTransform>(Vec2(100, 100));
-	
-	m_player->addComponent<CAnimation>(
-		m_game->getAssetManager().getAnimation("subIdle"),
-		true
-	);
-
 	m_player->addComponent<CInput>();
-	m_player->addComponent<CAim>(
-		0,
-		false
-	);
 	m_player->addComponent<CState>();
 	m_player->addComponent<CTransformSmooth>(
 		500.f,	// acc
 		250.f,	// max speed
 		0.2f,	// damping
-		6.f,	// flip speed
+		8.f,	// flip speed
 		1.f,	// tilt speed
-		10.f	// tilt max angle
+		60.f	// tilt max angle
 	);
 
 	m_player->addComponent<CIdleBob>(
@@ -83,6 +73,29 @@ void Scene_Play::spawnPlayer()
 		1.f, //amplitude
 		0     //time
 	);
+
+	m_player->addComponent<CAnimation>(
+		m_game->getAssetManager().getAnimation("subIdle"),
+		true
+	);
+
+	std::shared_ptr<Entity> bubbleEmitter = m_entityManager.addEntity("emitter");
+	bubbleEmitter->addComponent<CParticles>(
+		sf::Color(0, 0, 230), // color
+		false, // active
+		0, //timer
+		0.03f, //spawnrate
+		10, // count
+		10.f // intenst
+		);
+
+	bubbleEmitter->addComponent<CTransform>();
+	bubbleEmitter->getComponent<CTransform>().parent = m_player;
+	bubbleEmitter->getComponent<CTransform>().offSet = Vec2(
+		-m_player->getComponent<CAnimation>().animation.getSize().x / 2,
+		0
+	);
+
 
 	std::shared_ptr<Entity> toolMount = m_entityManager.addEntity("player_tool_mount");
 	toolMount->addComponent<CAnimation>(

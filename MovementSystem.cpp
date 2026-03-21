@@ -5,6 +5,8 @@ MovementSystem::MovementSystem()
 {
 }
 
+//-------------------------------MAIN UPDATE METHOD-------------------------------------------
+
 void MovementSystem::update(EntityManager& m, float dt, Vec2 mousePos) {
     for (auto& e : m.getEntities()) {
         if (!e->hasComponent<CTransform>()) continue;
@@ -12,12 +14,17 @@ void MovementSystem::update(EntityManager& m, float dt, Vec2 mousePos) {
         auto& transform = e->getComponent<CTransform>();
 
         // Process Input and Physics Logic
-        if (e->hasComponent<CInput>() && e->hasComponent<CTransformSmooth>()) {
+        if ((e->hasComponent<CInput>() || e->getComponent<CTransform>().parent->hasComponent<CInput>()) 
+            && (e->hasComponent<CTransformSmooth>() || e->getComponent<CTransform>().parent->hasComponent<CTransformSmooth>()))
+        {
             handleInput(e, dt);
             auto& smooth = e->getComponent<CTransformSmooth>();
-            Vec2 dirToMouse = mousePos - transform.pos;
-            flipEntity(transform, smooth.flipSpeed, dirToMouse, dt);
             
+            if (e->getTag() == "player")
+            {
+                Vec2 dirToMouse = mousePos - transform.pos;
+                flipEntity(transform, smooth.flipSpeed, dirToMouse, dt);
+            }
         }
 
         // Process Aesthetic/Idle Logic
@@ -26,6 +33,7 @@ void MovementSystem::update(EntityManager& m, float dt, Vec2 mousePos) {
         }
 
         // Finalize Position (Movement or Hierarchy)
+        
         updateTransform(e, dt);
 		
     }
@@ -35,6 +43,10 @@ void MovementSystem::update(EntityManager& m, float dt, Vec2 mousePos) {
 
 void MovementSystem::handleInput(std::shared_ptr<Entity> e, float dt) {
     auto& input = e->getComponent<CInput>();
+    if (e->getComponent<CTransform>().parent != nullptr)
+    {
+        input = e->getComponent<CTransform>().parent->getComponent<CInput>();
+    }
     auto& transform = e->getComponent<CTransform>();
     auto& smooth = e->getComponent<CTransformSmooth>();
     auto& state = e->getComponent<CState>();
@@ -47,6 +59,10 @@ void MovementSystem::handleInput(std::shared_ptr<Entity> e, float dt) {
     
     if (inputDir.length() > 0) {
         state.set(PlayerState::MOVE);
+        if (e->hasComponent<CParticles>())
+        {
+            e->getComponent<CParticles>().active = true;
+        }
         inputDir = inputDir.normalized();
         transform.velocity += inputDir * smooth.acceleration * dt;
         
@@ -58,9 +74,13 @@ void MovementSystem::handleInput(std::shared_ptr<Entity> e, float dt) {
     else {
         state.set(PlayerState::IDLE);
         applyDamping(transform, smooth, dt);
+        if (e->hasComponent<CParticles>())
+        {
+            e->getComponent<CParticles>().active = false;
+        }
     }
 
-    updateTilt(transform, smooth, inputDir.y, dt);
+
 }
 
 void MovementSystem::applyDamping(CTransform& t, CTransformSmooth& s, float dt) {
@@ -141,7 +161,6 @@ void MovementSystem::updateTilt(CTransform& transform, CTransformSmooth& smooth,
     // 2. Determine the Target Angle
     if (inputY != 0)
     {
-        float intensity = std::abs(transform.velocity.y) / 100.0f;
         targetAngle = (inputY * maxAngle * facingDir);
     }
     else

@@ -48,8 +48,8 @@ public:
     float acceleration = 20.f;
     float maxSpeed = 200.f;
     float damping = 0.8f;
-	float flipSpeed = 0.1f;
-	float tiltSpeed = 30.f;
+	float flipSpeed = 1.f;
+	float tiltSpeed = 5.f;
 	float tiltMaxAngle = 15.f;
 
 	CTransformSmooth() {};
@@ -155,4 +155,21 @@ public:
     float gravity = 0;
     CGravity() {}
     CGravity(float g) : gravity(g) {}
+};
+
+class CParticles : public Component
+{
+
+public:
+    sf::Color color;
+    bool active;
+    float timer;
+    float spawnRate;
+    int count;
+    float intensity;
+
+    CParticles() {};
+    CParticles(sf::Color color, bool active, float timer, float spawnRate, int count, float intensity) 
+        : color(color), active(active), timer(timer), spawnRate(spawnRate), count(count), intensity(intensity)
+    {};
 };

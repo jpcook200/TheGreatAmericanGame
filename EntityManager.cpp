@@ -44,7 +44,16 @@ const EntityVec& EntityManager::getEntities()
 
 const EntityVec& EntityManager::getEntities(const std::string& tag)
 {
-	return m_entityMap.at(tag);
+	static EntityVec emptyVec;
+
+	auto it = m_entityMap.find(tag);
+
+	if (it != m_entityMap.end())
+	{
+		return it->second;
+	}
+
+	return emptyVec;
 }
 
 const std::map<std::string, EntityVec> EntityManager::getEntityMap()
