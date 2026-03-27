@@ -16,6 +16,7 @@
 #include "AnimationSystem.h"
 #include "RenderSystem.h"
 #include "ParticleSystem.h"
+#include "MenuSystem.h"
 
 class Scene_Play : public Scene
 {
@@ -27,15 +28,16 @@ class Scene_Play : public Scene
 
 protected:
     std::shared_ptr<Entity> m_player;
-    std::shared_ptr<Entity> m_player_root;
+    std::shared_ptr<Entity> m_selectedEntity = nullptr;
     std::string m_levelPath;
     PlayerConfig m_playerConfig;
 
     bool m_drawTextures = true;
     bool m_drawCollision = false;
     bool m_drawGrid = false;
+    bool m_devMode = false;
 
-    const Vec2 m_gridSize = { 64, 64 };
+    const Vec2 m_gridSize = { 32, 32 };
     /*sf::Text m_gridText;*/
     //Physics m_worldPhysics;
 
@@ -51,12 +53,15 @@ protected:
     void onEnd();
     void setPaused(bool);
 
+    void sMouseInput();
+
     //systems
-    MovementSystem MovementSystem;
-    AimSystem AimSystem;
-	AnimationSystem AnimationSystem;
-    RenderSystem RenderSystem;
+    MovementSystem movementSystem;
+    AimSystem aimSystem;
+	AnimationSystem animationSystem;
+    RenderSystem renderSystem;
     ParticleSystem particleSystem;
+    MenuSystem menuSystem;
 	    
     float toolMountOffsetX = 18.f;
 	float toolMountOffsetY = 14.4f;

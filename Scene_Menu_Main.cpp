@@ -11,8 +11,8 @@ Scene_Menu_Main::Scene_Menu_Main(GameEngine* gameEngine)
 
 void Scene_Menu_Main::init()
 {
-	registerAction(sf::Keyboard::Key::Q, "PLAY");
-	registerAction(sf::Keyboard::Key::Escape, "QUIT");
+	registerAction(InputKey{ InputKey::Device::Keyboard, (int)sf::Keyboard::Key::Space }, "PLAY");
+	registerAction(InputKey{ InputKey::Device::Keyboard, (int)sf::Keyboard::Key::Escape }, "QUIT");
 
 	int titleSize = 60;
 	m_menuText.setCharacterSize(titleSize);

@@ -25,6 +25,8 @@ void GameEngine::init(const std::string& path)
 		settings
 	);
 
+	ImGui::SFML::Init(m_window);
+	ImGui::GetIO().FontGlobalScale = 1.5f;
 	m_window.setFramerateLimit(60);
 
 	// Init first scene
@@ -44,6 +46,9 @@ void GameEngine::sUserInput()
 
 	while (const std::optional event = m_window.pollEvent())
 	{
+		ImGui::SFML::ProcessEvent(m_window, *event);
+		auto& actionMap = getCurrentScene()->getActionMap();
+
 		if (event->is<sf::Event::Closed>())
 		{
 			quit();
@@ -51,21 +56,47 @@ void GameEngine::sUserInput()
 
 		if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
 		{
-			auto& actionMap = getCurrentScene()->getActionMap();
-			if (actionMap.contains(keyPressed->code))
+			int keyCode = static_cast<int>(keyPressed->code);
+			InputKey inputKey{ InputKey::Device::Keyboard, keyCode };
+			if (actionMap.contains(inputKey))
 			{
 				// Send action with "START" type
-				getCurrentScene()->doAction(Action(actionMap.at(keyPressed->code), "START"));
+				getCurrentScene()->doAction(Action(actionMap.at(inputKey), "START"));
 			}
 		}
 
 		if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>())
 		{
-			auto& actionMap = getCurrentScene()->getActionMap();
-			if (actionMap.contains(keyReleased->code))
+			int keyCode = static_cast<int>(keyReleased->code);
+			InputKey inputKey{ InputKey::Device::Keyboard, keyCode };
+			if (actionMap.contains(inputKey))
 			{
 				// Send action with "END" type
-				getCurrentScene()->doAction(Action(actionMap.at(keyReleased->code), "END"));
+				int keyCode = static_cast<int>(keyReleased->code);
+				getCurrentScene()->doAction(Action(actionMap.at(inputKey), "END"));
+			}
+		}
+
+		//mouse 
+		if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
+		{
+			int mouseButtonCode = static_cast<int>(mouseButtonPressed->button);
+			InputKey inputKey{ InputKey::Device::Mouse, mouseButtonCode };
+			
+			if (actionMap.contains(inputKey))
+			{
+				getCurrentScene()->doAction(Action(actionMap.at(inputKey), "START"));
+			}
+		}
+
+		if (const auto* mouseButtonReleased = event->getIf<sf::Event::MouseButtonReleased>())
+		{
+			int mouseButtonCode = static_cast<int>(mouseButtonReleased->button);
+			InputKey inputKey{ InputKey::Device::Keyboard, mouseButtonCode };
+
+			if (actionMap.contains(inputKey))
+			{
+				getCurrentScene()->doAction(Action(actionMap.at(inputKey), "END"));
 			}
 		}
 	}
@@ -80,12 +111,17 @@ void GameEngine::run()
 	{
 		sf::Time dt = deltaClock.restart();
 		float deltaTime = dt.asSeconds();
-
+		ImGui::SFML::Update(m_window, dt);
 		m_window.clear();
 		sUserInput();
 		update(deltaTime);
+		
+		ImGui::SFML::Render(m_window);
 		m_window.display();
 	}
+
+	ImGui::SFML::Shutdown();
+
 }
 
 void GameEngine::quit()

@@ -11,7 +11,27 @@
 
 class GameEngine;												// allow access to game engine without circular dependency
 
-typedef std::map<sf::Keyboard::Key, std::string> ActionMap;		// a map connecting an action name to an key Reference
+struct InputKey
+{
+	enum Device
+	{
+		Mouse,
+		Keyboard
+	};
+
+	Device device;
+	int code;
+
+	bool operator<(const InputKey& other) const
+	{
+		if (device != other.device)
+			return static_cast<int>(device) < static_cast<int>(other.device);
+
+		return code < other.code;
+	}
+};
+
+typedef std::map<InputKey, std::string> ActionMap;				// a map connecting an action name to an key Reference
 
 class Scene
 {
@@ -32,14 +52,14 @@ public:
 	Scene(GameEngine* gameEngine);								// constructor
 	virtual ~Scene();											// destructor
 
-	virtual void update(float dt) = 0;									// virtual void update function to update any scene info, must be included in child classes
+	virtual void update(float dt) = 0;							// virtual void update function to update any scene info, must be included in child classes
 	virtual void sDoAction(const Action& action) = 0;			// action system which converts actions to output created in child class
 	virtual void sRender() = 0;									// render items in the scene, cerated in the child
 
 	virtual void doAction(const Action& action);				// calls sDoAction allowing the childs set actions to work
 	void simulate(const size_t frames);							// simulate the scene 
 	void registerAction(										// initlise actions and their keys in the map
-		sf::Keyboard::Key inputKey,
+		InputKey inputKey,
 		const std::string& actionName
 	);
 

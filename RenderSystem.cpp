@@ -4,7 +4,7 @@ RenderSystem::RenderSystem()
 {
 }
 
-void RenderSystem::update(EntityManager& entityManager, sf::RenderWindow& window, ParticleSystem& particleSystem)
+void RenderSystem::update(EntityManager& entityManager, sf::RenderWindow& window, ParticleSystem& particleSystem, bool devMode, Vec2& gridSize)
 {
 	drawCheckerBoard(window);
     particleSystem.draw(window);
@@ -20,6 +20,18 @@ void RenderSystem::update(EntityManager& entityManager, sf::RenderWindow& window
         {
             drawEntity(e, window);
         }
+
+        if (devMode)
+        {
+            drawGrid(gridSize, window);
+
+            if (e->hasComponent<CBoundingBox>())
+            {
+                drawBBox(e, window);
+            }
+        }
+        
+        
     }
 }
 
@@ -107,4 +119,49 @@ void RenderSystem::drawCheckerBoard(sf::RenderWindow& window)
             window.draw(tile);
         }
     }
+}
+
+void RenderSystem::drawBBox(std::shared_ptr<Entity> e, sf::RenderWindow& window)
+{
+    auto& b = e->getComponent<CBoundingBox>();
+    auto& t = e->getComponent<CTransform>();
+    sf::RectangleShape rect;
+    rect.setOrigin({ b.halfSize.x, b.halfSize.y });
+    rect.setPosition(sf::Vector2f(t.pos.x, t.pos.y));
+    rect.setSize({ b.size.x, b.size.y });
+
+    rect.setFillColor(sf::Color::Transparent);
+    rect.setOutlineThickness(1.f);
+    rect.setOutlineColor(sf::Color::Red);
+
+    window.draw(rect);
+}
+
+void RenderSystem::drawGrid(Vec2& gridSize, sf::RenderWindow& window)
+{
+    float windowWidth = (float)window.getSize().x;
+    float windowHeight = (float)window.getSize().y;
+    float leftX = window.getView().getCenter().x - windowWidth / 2.0;
+    float rightX = leftX + windowWidth + gridSize.x;
+    float nextGridX = leftX - ((int)leftX % (int)gridSize.x);
+
+    for (float x = nextGridX; x < rightX; x += gridSize.y)
+    {
+        drawLine(Vec2(x, 0), Vec2(x, windowHeight), window);
+    }
+
+    for (float y = 0; y < windowHeight; y += gridSize.y)
+    {
+        drawLine(Vec2(leftX, windowHeight - y), Vec2(rightX, windowHeight - y), window);
+
+    }
+}
+void RenderSystem::drawLine(const Vec2& p1, const Vec2& p2, sf::RenderWindow& window)
+{
+    sf::Vertex line[] = {
+        sf::Vertex(sf::Vector2f(p1.x, p1.y)),
+        sf::Vertex(sf::Vector2f(p2.x, p2.y))
+    };
+
+    window.draw(line, 2, sf::PrimitiveType::Lines);
 }

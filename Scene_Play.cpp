@@ -12,10 +12,12 @@ Scene_Play::Scene_Play(GameEngine* gameEngine, const std::string& levelPath)
 void Scene_Play::init(const std::string& levelPath)
 {
 	//register actions for the scene
-	registerAction(sf::Keyboard::Key::D, "RIGHT");
-	registerAction(sf::Keyboard::Key::A, "LEFT");
-	registerAction(sf::Keyboard::Key::W, "UP");
-	registerAction(sf::Keyboard::Key::S, "DOWN");
+	registerAction(InputKey{ InputKey::Device::Keyboard, (int)sf::Keyboard::Key::D }, "RIGHT");
+	registerAction(InputKey{ InputKey::Device::Keyboard, (int)sf::Keyboard::Key::A }, "LEFT");
+	registerAction(InputKey{ InputKey::Device::Keyboard, (int)sf::Keyboard::Key::W }, "UP");
+	registerAction(InputKey{ InputKey::Device::Keyboard, (int)sf::Keyboard::Key::S }, "DOWN");
+	registerAction(InputKey{ InputKey::Device::Keyboard, (int)sf::Keyboard::Key::U }, "TOGGLEDEV");
+	registerAction(InputKey{ InputKey::Device::Mouse, (int)sf::Mouse::Button::Left }, "OPEN_E_MENU");
 
 	loadLevel(levelPath);
 }
@@ -26,20 +28,21 @@ void Scene_Play::update(float dt)
 
 	if (!m_pause)
 	{
-		MovementSystem.update(m_entityManager, dt, m_game->getMousePos());
-		AimSystem.update(m_entityManager, m_game->getMousePos(), dt);
+		movementSystem.update(m_entityManager, dt, m_game->getMousePos());
+		aimSystem.update(m_entityManager, m_game->getMousePos(), dt);
 		sLifespan(); // give dt
 		sCollision();
 		//particleSystem.update(m_entityManager, dt);
 		m_currentFrame++;
 	}
-
-	AnimationSystem.update(m_entityManager, m_game->getAssetManager(), dt);
+	animationSystem.update(m_entityManager, m_game->getAssetManager(), dt);
 	sRender();
+	menuSystem.update(m_game->getWindow(), dt, m_selectedEntity, m_game);
 }
 
 Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity)
 {
+
 	return Vec2();
 }
 
@@ -50,7 +53,7 @@ void Scene_Play::loadLevel(const std::string& filename)
 
 void Scene_Play::sRender()
 {
-	RenderSystem.update(m_entityManager, m_game->getWindow(), particleSystem);
+	renderSystem.update(m_entityManager, m_game->getWindow(), particleSystem, m_devMode, m_gridSize);
 }
 
 void Scene_Play::spawnPlayer()
@@ -77,6 +80,10 @@ void Scene_Play::spawnPlayer()
 	m_player->addComponent<CAnimation>(
 		m_game->getAssetManager().getAnimation("subIdle"),
 		true
+	);
+
+	m_player->addComponent<CBoundingBox>(
+		Vec2(m_player->getComponent<CAnimation>().animation.getSize().x, m_player->getComponent<CAnimation>().animation.getSize().y * 0.75)
 	);
 
 	std::shared_ptr<Entity> bubbleEmitter = m_entityManager.addEntity("emitter");
@@ -159,6 +166,14 @@ void Scene_Play::sDoAction(const Action& action)
 		{
 			m_player->getComponent<CInput>().down = true;
 		}
+		else if (action.getName() == "TOGGLEDEV")
+		{
+			m_devMode = !m_devMode;
+		}
+		else if (action.getName() == "OPEN_E_MENU")
+		{
+			sMouseInput();
+		}
 		
 	}
 	else if (action.getType() == "END")
@@ -191,3 +206,32 @@ void Scene_Play::setPaused(bool)
 {
 }
 
+void Scene_Play::sMouseInput()
+{
+	const ImGuiIO& io = ImGui::GetIO();
+
+	if (io.WantCaptureMouse)
+	{
+		return;
+	}
+
+	if (m_devMode)
+	{
+		m_selectedEntity = nullptr;
+
+		for (auto& e : m_entityManager.getEntities())
+		{
+			auto& position = e->getComponent<CTransform>().pos;
+			auto& size = e->getComponent<CAnimation>().animation.getSize();
+			Vec2 mousePos = m_game->getMousePos();
+
+			if ((mousePos.x >= position.x - size.x / 2 && mousePos.x <= position.x + size.x / 2) &&
+				(mousePos.y <= position.y + size.y / 2 && mousePos.y >= position.y - size.y / 2))
+			{
+				m_selectedEntity = e;
+			}
+		}
+	}
+	
+
+}

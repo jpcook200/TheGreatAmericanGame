@@ -25,10 +25,10 @@ public:
 		float speed
 	);
 
-	void update(float dt);													// method that updates the current frame to new part of sprite sheet
+	void update(float dt);											// method that updates the current frame to new part of sprite sheet
 	bool hasEnded() const;											// flag if the animation has ended
 	const std::string& getName() const;								// get the name of the animation
 	const Vec2& getSize() const;									// get the sie of one frame
 	sf::Sprite& getSprite();										// get the actual sprite by reference
-	void setOrigin(float x, float y);												// set the origin of the sprite
+	void setOrigin(float x, float y);								// set the origin of the sprite
 };

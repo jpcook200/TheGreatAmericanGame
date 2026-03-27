@@ -4,6 +4,9 @@
 #include "AssetManager.h"
 
 #include <SFML/Graphics.hpp>
+#include "imgui.h"
+#include "imgui-SFML.h"
+
 #include <memory>
 #include <map>
 
